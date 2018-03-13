@@ -7,6 +7,9 @@
     }}): Observable<HttpResponse<{{operationResultType}}>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
+    {{#operationContentType}}
+    __headers.set('Content-Type', '{{{operationContentType}}}');
+    {{/operationContentType}}
     let __body: any = null;
 {{#operationParameters}}{{>parameter}}
 {{/operationParameters}}
