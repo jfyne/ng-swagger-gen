@@ -1,0 +1,21 @@
+---
+  swagger: "2.0"
+  paths:
+    "/":
+      get:
+        operationId: "list"
+        responses:
+          200:
+            schema:
+              $ref: "#/definitions/entities"
+  definitions:
+    entity:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+    entities:
+      type: "array"
+      items:
+        type: "string"
+

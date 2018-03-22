@@ -10,6 +10,9 @@
     "swagger",
     "codegen"
   ],
+  "scripts": {
+    "test": "jest"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cyclosproject/ng-swagger-gen.git"
@@ -22,6 +25,7 @@
     "ng-swagger-gen": "./ng-swagger-gen"
   },
   "devDependencies": {
+    "jest": "^22.4.3",
     "json-schema-ref-parser": "^4.1.1"
   }
 }

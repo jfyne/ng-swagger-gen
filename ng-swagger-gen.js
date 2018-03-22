@@ -465,7 +465,7 @@ function processModels(swagger, options) {
       modelIsObject: properties != null,
       modelIsEnum: enumValues != null,
       modelIsArray: elementType != null,
-      modelIsSimple: simpleType != null,
+      modelIsmodelResult: simpleType != null,
       modelSimpleType: simpleType,
       properties:
         properties == null
@@ -817,7 +817,7 @@ function operationId(given, method, url, allKnown) {
 function processServices(swagger, models, options) {
   var param, name, i, j;
   var services = {};
-  var operationIds = new Set();
+  //var operationIds = new Set();
   var minParamsForContainer = options.minParamsForContainer || 2;
   var defaultContentTypes = swagger.consumes ? swagger.consumes : [];
   for (var url in swagger.paths) {
@@ -947,6 +947,7 @@ function processServices(swagger, models, options) {
       };
       var modelResult = models[removeBrackets(resultType)];
       var actualType = resultType;
+      console.log(resultType, modelResult);
       if (modelResult && modelResult.modelIsSimple) {
         actualType = modelResult.modelSimpleType;
         var actualModel = models[removeBrackets(actualType)];
@@ -999,6 +1000,7 @@ function processServices(swagger, models, options) {
     for (i = 0; i < service.serviceOperations.length; i++) {
       var op = service.serviceOperations[i];
       for (var code in op.operationResponses) {
+        if (isNaN(parseInt(code))) continue;
         var response = op.operationResponses[code];
         dependencies.add(response.type);
       }
@@ -1013,4 +1015,8 @@ function processServices(swagger, models, options) {
   return services;
 }
 
-module.exports = ngSwaggerGen;
+module.exports = {
+  processModels: processModels,
+  processServices: processServices,
+  run: ngSwaggerGen
+};

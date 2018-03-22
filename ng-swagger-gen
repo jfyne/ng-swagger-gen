@@ -1,70 +1,61 @@
 #!/usr/bin/env node
-'use strict';
+"use strict";
 
 function parseJSON(file) {
   return JSON.parse(fs.readFileSync(file, "utf8"));
 }
 
-const SCHEMA = 'ng-swagger-gen-schema.json';
-const fs = require('fs');
-const path = require('path');
-const ArgumentParser = require('argparse').ArgumentParser;
+const SCHEMA = "ng-swagger-gen-schema.json";
+const fs = require("fs");
+const path = require("path");
+const ArgumentParser = require("argparse").ArgumentParser;
 const pkg = parseJSON(path.join(__dirname, "package.json"));
 const schema = parseJSON(path.join(__dirname, SCHEMA));
 
 var argParser = new ArgumentParser({
   version: pkg.version,
   addHelp: true,
-  description: "Swagger API client generator for Angular 2+ projects." +
-  " Either uses a configuration file (defaults to " +
-  schema.properties.config.default +
-  " in the current directory, but the file can be specified)" +
-  " allowing the program to be called without arguments, or the swagger input" +
-  " file must be specified. A configuration file can be generated with all" +
-  " default values if --gen-config is specified, together with the swagger" +
-  " input file, which is also required in this case."
+  description:
+    "Swagger API client generator for Angular 2+ projects." +
+    " Either uses a configuration file (defaults to " +
+    schema.properties.config.default +
+    " in the current directory, but the file can be specified)" +
+    " allowing the program to be called without arguments, or the swagger input" +
+    " file must be specified. A configuration file can be generated with all" +
+    " default values if --gen-config is specified, together with the swagger" +
+    " input file, which is also required in this case."
 });
-argParser.addArgument(
-  ["-i", "--input", "-s", "--swagger"],
-  {
-    help: "The swagger input file or URL. If not specified, it is required" +
+argParser.addArgument(["-i", "--input", "-s", "--swagger"], {
+  help:
+    "The swagger input file or URL. If not specified, it is required" +
     " that a configuration file called " +
     schema.properties.config.default +
     " exist in the currentdirectory, or a configuration file can be" +
     " specified with the -c or --config option.",
-    dest: "swagger",
-    metavar: "SWAGGER"
-  }
-);
-argParser.addArgument(
-  ["-o", "--output"],
-  {
-    help: "The root directory where files will be generated.",
-    defaultValue: schema.properties.output.default,
-    dest: "output"
-  }
-);
-argParser.addArgument(
-  ["-c", "--config"],
-  {
-    help: "Specifies the configuration file name.",
-    defaultValue: schema.properties.config.default,
-    dest: "config"
-  }
-);
-argParser.addArgument(
-  ["--gen-config"],
-  {
-    help: "Generates the configuration file " +
+  dest: "swagger",
+  metavar: "SWAGGER"
+});
+argParser.addArgument(["-o", "--output"], {
+  help: "The root directory where files will be generated.",
+  defaultValue: schema.properties.output.default,
+  dest: "output"
+});
+argParser.addArgument(["-c", "--config"], {
+  help: "Specifies the configuration file name.",
+  defaultValue: schema.properties.config.default,
+  dest: "config"
+});
+argParser.addArgument(["--gen-config"], {
+  help:
+    "Generates the configuration file " +
     schema.properties.config.default +
     "in the current directory, or the file specified with -c or --config. " +
     "No Swagger client classes are generated. " +
     "If input and output are specified, their values are stored in the " +
     "generated file as well.",
-    action: "storeTrue",
-    dest: "genConfig"
-  }
-);
+  action: "storeTrue",
+  dest: "genConfig"
+});
 var args = argParser.parseArgs();
 
 var config = args.config;
@@ -97,7 +88,7 @@ if (args.genConfig) {
  */
 function generateConfig() {
   var options = {
-    "$schema": "./node_modules/ng-swagger-gen/ng-swagger-gen-schema.json"
+    $schema: "./node_modules/ng-swagger-gen/ng-swagger-gen-schema.json"
   };
   options.swagger = args.swagger ? args.swagger : "<swagger file>";
   if (args.output) {
@@ -109,7 +100,7 @@ function generateConfig() {
     if (propDef.default && !options.hasOwnProperty(propName)) {
       var value = propDef.default;
       if (propDef.type == "boolean") {
-        value = value === 'true';
+        value = value === "true";
       } else if (propDef.type == "integer") {
         value = parseInt(value, 10);
       }
@@ -117,7 +108,7 @@ function generateConfig() {
     }
   }
   var json = JSON.stringify(options, null, 2);
-  fs.writeFileSync(config, json, {encoding: "utf8"});
+  fs.writeFileSync(config, json, { encoding: "utf8" });
   console.info("Wrote " + config);
 }
 
@@ -125,18 +116,23 @@ function generateConfig() {
  * Asks if the configuration file should be overridden, then, if so, do it
  */
 function askThenGenerateConfig() {
-  const readline = require('readline');
+  const readline = require("readline");
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   });
-  rl.question("The configuration file " + config + " already exists.\n" +
-    "Do you want to override it? [y/N]", (answer) => {
-    if (answer == 'y' || answer == 'Y') {
-      generateConfig();
+  rl.question(
+    "The configuration file " +
+      config +
+      " already exists.\n" +
+      "Do you want to override it? [y/N]",
+    answer => {
+      if (answer == "y" || answer == "Y") {
+        generateConfig();
+      }
+      rl.close();
     }
-    rl.close();
-  });
+  );
 }
 
 /**
@@ -144,5 +140,5 @@ function askThenGenerateConfig() {
  */
 function run(options) {
   var ngSwaggerGen = require("./ng-swagger-gen.js");
-  ngSwaggerGen(options);
+  ngSwaggerGen.run(options);
 }
